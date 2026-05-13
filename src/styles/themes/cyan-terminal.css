@@ -1,0 +1,17 @@
+/* Cyan / Terminal — hacker aesthetic */
+:root,
+html[data-theme="light"] {
+  --background: #f8fafb;
+  --foreground: #1c2333;
+  --accent: #0891b2;
+  --muted: #d0dce8;
+  --border: #d0dce8;
+}
+
+html[data-theme="dark"] {
+  --background: #0a0f1a;
+  --foreground: #cdd9e5;
+  --accent: #22d3ee;
+  --muted: #141e2e;
+  --border: #1c3a4a;
+}

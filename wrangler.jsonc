@@ -1,0 +1,13 @@
+{
+  "name": "vicitales",
+  "compatibility_date": "2026-02-19",
+   "pages_build_output_dir": "./dist",
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "vicitales-db",
+      "database_id": "4f165704-86b2-4748-a5a0-5934de1635f6"
+    }
+  ]
+}

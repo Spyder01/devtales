@@ -1,0 +1,17 @@
+/* Electric Blue — clean, technical */
+:root,
+html[data-theme="light"] {
+  --background: #fdfdfd;
+  --foreground: #1e1e2e;
+  --accent: #2563eb;
+  --muted: #dde1ea;
+  --border: #dde1ea;
+}
+
+html[data-theme="dark"] {
+  --background: #0d1117;
+  --foreground: #e6edf3;
+  --accent: #818cf8;
+  --muted: #21262d;
+  --border: #30363d;
+}

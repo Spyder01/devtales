@@ -1,0 +1,67 @@
+---
+
+---
+
+<div class="mt-12">
+  <p class="mb-3 text-sm opacity-70">
+    Was this useful?
+  </p>
+
+  <div class="flex flex-wrap gap-3">
+    <button data-reaction="helpful">👍 Helpful</button>
+    <button data-reaction="learned">💡 Learned something</button>
+    <button data-reaction="clear">✅ Well explained</button>
+    <button data-reaction="bookmark">🔖 Bookmarking this</button>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "devtales_reactions";
+const path = location.pathname;
+
+const sessionId =
+  sessionStorage.getItem("devtales_session") ||
+  crypto.randomUUID();
+
+sessionStorage.setItem("devtales_session", sessionId);
+
+// -----------------------------
+// Load stored reactions
+// -----------------------------
+const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+const currentReactions = new Set(stored[path] || []);
+
+// -----------------------------
+// Apply UI state
+// -----------------------------
+document.querySelectorAll("[data-reaction]").forEach((btn: any) => {
+  const reaction = btn.dataset.reaction;
+
+  if (currentReactions.has(reaction)) {
+    btn.style.opacity = "0.5";
+    btn.disabled = true;
+  }
+
+  btn.addEventListener("click", async () => {
+    if (currentReactions.has(reaction)) return;
+
+    // optimistic UI
+    btn.style.opacity = "0.5";
+    btn.disabled = true;
+
+    currentReactions.add(reaction);
+    stored[path] = Array.from(currentReactions);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+
+    await fetch("/api/react", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        path,
+        sessionId,
+        reaction
+      })
+    });
+  });
+});
+</script>

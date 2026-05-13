@@ -1,0 +1,17 @@
+/* Amber / Warm Dark — warm but technical */
+:root,
+html[data-theme="light"] {
+  --background: #fefdf8;
+  --foreground: #1c1a10;
+  --accent: #b45309;
+  --muted: #e8e0cc;
+  --border: #e8e0cc;
+}
+
+html[data-theme="dark"] {
+  --background: #0f0e09;
+  --foreground: #f0ead6;
+  --accent: #fbbf24;
+  --muted: #1e1c0e;
+  --border: #3d3010;
+}

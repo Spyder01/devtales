@@ -1,0 +1,79 @@
+<script>
+(() => {
+  // -----------------------------
+  // Session
+  // -----------------------------
+  const sessionId =
+    sessionStorage.getItem("devtales_session") ||
+    crypto.randomUUID();
+
+  sessionStorage.setItem("devtales_session", sessionId);
+
+  let maxScroll = 0;
+  let sendTimer: number | null = null;
+  let visitTimer: number | null = null;
+
+  // -----------------------------
+  // Calculate scroll depth
+  // -----------------------------
+  function calculateScroll() {
+    const scrollPercent =
+      (window.scrollY + window.innerHeight) /
+      document.documentElement.scrollHeight;
+
+    const percent = Math.min(100, Math.round(scrollPercent * 100));
+    maxScroll = Math.max(maxScroll, percent);
+  }
+
+  // -----------------------------
+  // Send analytics
+  // -----------------------------
+  function sendVisit() {
+    navigator.sendBeacon(
+      "/api/visits",
+      JSON.stringify({
+        path: location.pathname,
+        sessionId,
+        scrollDepth: maxScroll
+      })
+    );
+  }
+
+  // -----------------------------
+  // Scroll tracking (throttled)
+  // -----------------------------
+  function onScroll() {
+    calculateScroll();
+
+    clearTimeout(sendTimer!);
+    sendTimer = setTimeout(sendVisit, 1500) as unknown as number;
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  // -----------------------------
+  // Astro navigation handling
+  // -----------------------------
+  function onPageLoad() {
+    maxScroll = 0;
+
+    // wait 5 seconds before counting visit
+    clearTimeout(visitTimer!);
+    visitTimer = setTimeout(sendVisit, 5000) as unknown as number;
+  }
+
+  document.addEventListener("astro:page-load", onPageLoad);
+
+  // First load
+  onPageLoad();
+
+  // -----------------------------
+  // Send when user leaves
+  // -----------------------------
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      sendVisit();
+    }
+  });
+})();
+</script>

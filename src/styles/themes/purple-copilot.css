@@ -1,0 +1,17 @@
+/* Purple / Copilot — AI & modern dev tools vibe */
+:root,
+html[data-theme="light"] {
+  --background: #fdfcff;
+  --foreground: #1e1b2e;
+  --accent: #7c3aed;
+  --muted: #e2d9f3;
+  --border: #e2d9f3;
+}
+
+html[data-theme="dark"] {
+  --background: #0f0d1a;
+  --foreground: #e2e0f0;
+  --accent: #a78bfa;
+  --muted: #1a1530;
+  --border: #2e2050;
+}
