@@ -351,6 +351,38 @@ nodes.
 
 ---
 
+## The Page Index
+
+The slot-addressing formula — `node_id / 101` for the page, `node_id % 101` for the slot — tells you *which logical page* a node lives on, but not where that page is physically on disk. Page IDs are allocated in insertion order and can be scattered across the file. The page index bridges that gap.
+
+It is a linked list of **PageIndex pages** (type 5). Each page holds up to **507 entries**, where each entry is a single 8-byte physical `page_id`. Entry N holds the disk address of the Nth node page in the chain.
+
+The full lookup path for a node:
+
+```
+page_index = node_id / 101       →  which entry in the page index
+dir_page   = page_index / 507    →  which PageIndex page in the chain
+slot       = page_index % 507    →  slot within that PageIndex page
+physical   = records[slot].page_id  →  disk address of the node page
+→ read that page, take record at slot (node_id % 101)
+```
+
+For databases with up to **51,207 nodes** (507 node pages × 101 nodes each), the entire index fits in a single page — one extra read on top of the node page itself. Beyond that, the chain grows by one page per 507 node pages added.
+
+### Page Index Record
+
+Each record is 8 bytes:
+
+| Offset | Size | Field |
+|-------:|-----:|-------|
+| 0 | 8 | `page_id` (u64, LE) — physical page ID of the corresponding node page |
+
+The page index page header has a single field: `page_dir_count` (u16, 2 bytes) — the number of entries stored on that page.
+
+A dedicated post will cover the full lookup path in depth, including how the index is updated on node page allocation and what happens during crash recovery.
+
+---
+
 ## The WAL Sidecar
 
 When WAL mode is enabled (the default), writes do not go directly to the
