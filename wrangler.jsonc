@@ -7,7 +7,8 @@
     {
       "binding": "DB",
       "database_name": "vicitales-db",
-      "database_id": "4f165704-86b2-4748-a5a0-5934de1635f6"
+      "database_id": "4f165704-86b2-4748-a5a0-5934de1635f6",
+      "migrations_dir": "migrations"
     }
   ]
 }

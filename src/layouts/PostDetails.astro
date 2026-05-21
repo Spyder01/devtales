@@ -97,7 +97,7 @@ let nextPost: Post = null;
 
 if (isSeries) {
   const seriesPosts = allPosts
-    .filter(p => p.series === post.data.series)
+    .filter(p => p.series === post.data.series && post.data.chapter !== -1)
     .sort((a, b) => (a.chapter ?? 0) - (b.chapter ?? 0));
 
   const currentIndex = seriesPosts.findIndex(p => p.id === post.id);
