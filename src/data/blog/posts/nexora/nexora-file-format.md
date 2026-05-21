@@ -16,9 +16,10 @@ tags:
 - rust
 - file-format
 - deep-dive
+- nexora
 ---
 
-In [part 1](./nexora-the-why) I explained *why* I am building Nexora: a
+In [part 1](/posts/posts/nexora/nexora-the-why/) I explained *why* I am building Nexora: a
 single-file embeddable graph database, the SQLite of graph stores. This post is the
 *how*, starting at the lowest level: the file itself.
 
@@ -411,3 +412,4 @@ Every layer gets its own dedicated post:
 - **The buffer pool** — in-memory page caching, eviction, and dirty tracking
 - **The WAL** — how the write-ahead log achieves session-level atomicity, the recovery scan on open, and why checkpoint-on-close is the simplest correct design
 
+*Nexora is open source — check it out on <a href="https://github.com/spyder01/nexora" target="_blank">GitHub</a>.*
