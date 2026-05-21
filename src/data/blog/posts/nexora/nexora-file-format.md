@@ -33,7 +33,7 @@ file, read the pages, you have the database.
 
 The `.nxr` file is a raw binary file. There is no text encoding, no delimiters, no human-readable structure — just bytes.
 
-Every multi-byte integer in the file is stored in **little-endian** order: the least significant byte comes first. So the value `1` as a 8-byte integer on disk is `01 00 00 00 00 00 00 00`, not `00 00 00 00 00 00 00 01`. This matches the native byte order of x86 and ARM processors, which means the CPU can load a value directly off disk into a register without swapping any bytes. Throughout this post, field descriptions marked `(u64, LE)` or `(u32, LE)` are reminders of this contract.
+Every multi-byte integer in the file is stored in **little-endian** order: the least significant byte comes first. So the value `1` as an 8-byte integer on disk is `01 00 00 00 00 00 00 00`, not `00 00 00 00 00 00 00 01`. This matches the native byte order of x86 and ARM processors, which means the CPU can load a value directly off disk into a register without swapping any bytes. Throughout this post, field descriptions marked `(u64, LE)` or `(u32, LE)` are reminders of this contract.
 
 ---
 
@@ -45,7 +45,7 @@ The db file is divided into fixed-size **4 KB chunks** or a single **OS Page**.
 
 That 4KB number (A page) is not arbitrary, but rather it is the smallest unit of memory that the OS manages when mapping between virtual memory address and physical RAM. The CPU's memory management unit (MMU) divides both virtual and physical memory into fixed-size chunks — pages. When a process accesses a virtual address, the MMU translates it to a physical address via a page table. If the physical page isn't in RAM, the OS triggers a page fault and loads it from disk.
 
-This is why Nexora uses 4KB pages for its file format, a single ***read()/write()*** syscall on a 4KB-aligned buffer maps to exaclty one OS page transfer, with no wasted partial reads. The filesystem block size is also typically 4 KB for the same reason, so disk I/O aligns cleanly too.
+This is why Nexora uses 4KB pages for its file format, a single ***read()/write()*** syscall on a 4KB-aligned buffer maps to exactly one OS page transfer, with no wasted partial reads. The filesystem block size is also typically 4 KB for the same reason, so disk I/O aligns cleanly too.
 
 ### Page Structure
 
@@ -64,7 +64,7 @@ Every page begins with a 32-byte **page header**:
 
 #### Null Representation
 
-`next_page_id` and `prev_page_id` are used to chain pages of the same type into a linked list. And now since there's a linked-list that means there should be the terminal nodes which point to null, and since there isn't a concept of null value in binary, we assign a sentinel value `0xFFFFFFFFFFFFFFFF` (all bits set) as the quivalent to null pointer, which in this context would mean "no next page".
+`next_page_id` and `prev_page_id` are used to chain pages of the same type into a linked list. And now since there's a linked-list that means there should be the terminal nodes which point to null, and since there isn't a concept of null value in binary, we assign a sentinel value `0xFFFFFFFFFFFFFFFF` (all bits set) as the equivalent to null pointer, which in this context would mean "no next page".
 
 ### Page Type
 
