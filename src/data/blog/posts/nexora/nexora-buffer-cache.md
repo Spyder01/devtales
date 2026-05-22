@@ -167,6 +167,6 @@ On `close`, flush runs first, then the underlying `PageStore` is closed. Both `S
 
 ## What's Next
 
-The next post will cover the **WAL (Write-Ahead Log)** — how Nexora achieves crash safety, what gets written to the `.nxr-wal` sidecar on every write, and how checkpoint-on-close works.
+The next post will cover **indexes** — how Nexora maps a logical page number to a physical page ID in O(1), what a directory page looks like on disk, and how the index grows when the database exceeds a single directory page.
 
 *Nexora is open source — check it out on <a href="https://github.com/spyder01/nexora" target="_blank">GitHub</a>.*
