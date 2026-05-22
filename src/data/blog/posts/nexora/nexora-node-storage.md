@@ -70,7 +70,7 @@ Every page in Nexora, regardless of type, begins with the same 32-byte `NexoraPa
 
 ### The Node Page Header
 
-Immediately after the `NexoraPageHeader` comes the 4-byte **node page header**:
+Immediately after the `NexoraPageHeader` comes the 2-byte **node page header**:
 
 | Offset | Size | Field |
 |-------:|-----:|-------|

@@ -7,7 +7,14 @@
       "Bash(cp /Users/suhanj/.projects/devtales/migrations/004_comments.sql /Users/suhanj/.projects/vicitales/vicitales-ui/migrations/004_comments.sql)",
       "Bash(cp /Users/suhanj/.projects/devtales/migrations/005_comments_token.sql /Users/suhanj/.projects/vicitales/vicitales-ui/migrations/005_comments_token.sql)",
       "Bash(cp /Users/suhanj/.projects/devtales/functions/api/comments.ts /Users/suhanj/.projects/vicitales/vicitales-ui/functions/api/comments.ts)",
-      "Bash(sed 's/devtales_comment_tokens/vicitales_comment_tokens/g' /Users/suhanj/.projects/devtales/src/components/Comments.astro > /Users/suhanj/.projects/vicitales/vicitales-ui/src/components/Comments.astro)"
+      "Bash(sed 's/devtales_comment_tokens/vicitales_comment_tokens/g' /Users/suhanj/.projects/devtales/src/components/Comments.astro > /Users/suhanj/.projects/vicitales/vicitales-ui/src/components/Comments.astro)",
+      "Bash(find /Users/suhanj/.projects/nexora/src/graph/label -type f | sort && find /Users/suhanj/.projects/nexora/src/graph/string -type f | sort)",
+      "Read(//Users/suhanj/.projects/nexora/src/graph/label/**)",
+      "Read(//Users/suhanj/.projects/nexora/src/graph/string/**)",
+      "Bash(grep -r \"Bitset256\\\\|BitSet256\" /Users/suhanj/.projects/nexora/src --include=\"*.rs\" -l)",
+      "Read(//Users/suhanj/.projects/nexora/src/**)",
+      "Bash(xargs cat)",
+      "Bash(python3 -c *)"
     ],
     "additionalDirectories": [
       "/Users/suhanj/.projects/vicitales/vicitales-ui/src/components"
