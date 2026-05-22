@@ -224,6 +224,14 @@ The `bits &= bits - 1` trick skips deleted slots without any branching — it pe
 
 This is O(edges) — unlike nodes, there is no page index for edges. Direct edge lookup by ID is rarely needed in practice. The primary access pattern is **adjacency traversal**: given a node, follow its `first_out_edge` / `first_in_edge` pointer and walk the list. That is O(degree), not O(all edges).
 
+#### When would you actually use get_edge?
+
+The typical case is **post-insert metadata updates**. `insert_edge` returns an `edge_id`. If the caller immediately wants to attach properties or update the weight, they pass that ID back to `update_edge_properties` or `update_label_and_weight` — both of which do the same linear scan internally. The insert-then-update pattern is common enough that it is worth knowing the cost: two scans, not one.
+
+A second case is **edge verification** — checking whether a specific relationship still exists before acting on it. For example, a `"DEPENDS_ON"` graph might check `get_edge(known_id)` to confirm an edge hasn't been concurrently deleted before following its outgoing chain. Because `edge_id` values are never reused (the footer's `next_edge_id` only increments), a stale ID returning `EdgeNotFound` is an unambiguous signal.
+
+What `get_edge` is **not** suited for is answering "does an edge exist between node A and node B?" That question is better answered by walking A's adjacency list and checking `dst_node_id` — O(out-degree of A), which in most real graphs is far smaller than the total edge count.
+
 ---
 
 ## Deleting an Edge
