@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm install *)"
+      "Bash(pnpm install *)",
+      "Bash(find /Users/suhanj/.projects/vicitales -type f | grep -v node_modules | grep -v \".astro/\\\\|dist/\\\\|.git/\\\\|pagefind\\\\|.wrangler\" | sort)",
+      "Read(//Users/suhanj/.projects/vicitales/**)",
+      "Bash(cp /Users/suhanj/.projects/devtales/migrations/004_comments.sql /Users/suhanj/.projects/vicitales/vicitales-ui/migrations/004_comments.sql)",
+      "Bash(cp /Users/suhanj/.projects/devtales/migrations/005_comments_token.sql /Users/suhanj/.projects/vicitales/vicitales-ui/migrations/005_comments_token.sql)",
+      "Bash(cp /Users/suhanj/.projects/devtales/functions/api/comments.ts /Users/suhanj/.projects/vicitales/vicitales-ui/functions/api/comments.ts)",
+      "Bash(sed 's/devtales_comment_tokens/vicitales_comment_tokens/g' /Users/suhanj/.projects/devtales/src/components/Comments.astro > /Users/suhanj/.projects/vicitales/vicitales-ui/src/components/Comments.astro)"
+    ],
+    "additionalDirectories": [
+      "/Users/suhanj/.projects/vicitales/vicitales-ui/src/components"
     ]
   }
 }

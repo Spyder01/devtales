@@ -3,7 +3,8 @@ import { render, type CollectionEntry } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import Reaction from "@/components/Reaction.astro"; 
+import Reaction from "@/components/Reaction.astro";
+import Comments from "@/components/Comments.astro";
 import Tag from "@/components/Tag.astro";
 import Analytics from "@/components/Analytics.astro";
 import Datetime from "@/components/Datetime.astro";
@@ -166,6 +167,10 @@ if (isSeries) {
     </ul>
 
     <Reaction />
+
+    <hr class="my-8 border-dashed" />
+
+    <Comments />
 
     <hr class="my-8 border-dashed" />
     

@@ -1,0 +1,273 @@
+---
+---
+
+<section id="comments-section" class="mt-12">
+  <h2 class="mb-6 text-lg font-semibold">Comments</h2>
+
+  <div id="comments-list" class="mb-10 space-y-6"></div>
+
+  <div id="reply-banner" class="mb-3 hidden items-center gap-2 rounded border border-dashed px-3 py-2 text-sm opacity-70">
+    <span>Replying to <strong id="reply-to-author"></strong></span>
+    <button id="cancel-reply" type="button" class="ml-auto text-accent hover:opacity-70">✕ Cancel</button>
+  </div>
+
+  <form id="comment-form" class="space-y-3">
+    <input type="hidden" id="reply-to-id" value="" />
+
+    <input
+      id="comment-author"
+      type="text"
+      placeholder="Your name"
+      maxlength="100"
+      required
+      class="w-full rounded border border-(--border) bg-(--background) px-3 py-2 text-sm outline-none focus:border-accent"
+    />
+
+    <textarea
+      id="comment-body"
+      placeholder="Write a comment…"
+      maxlength="2000"
+      required
+      rows="4"
+      class="w-full rounded border border-(--border) bg-(--background) px-3 py-2 text-sm outline-none focus:border-accent"
+    ></textarea>
+
+    <div class="flex items-center gap-3">
+      <button
+        type="submit"
+        id="submit-btn"
+        class="rounded bg-accent px-4 py-1.5 text-sm font-medium text-background hover:opacity-80 disabled:opacity-40"
+      >
+        Post comment
+      </button>
+      <span id="form-error" class="hidden text-sm text-red-500"></span>
+    </div>
+  </form>
+</section>
+
+<script>
+const path = location.pathname;
+const TOKEN_KEY = "devtales_comment_tokens";
+
+type Comment = {
+  id: number;
+  parent_id: number | null;
+  author: string;
+  body: string;
+  created_at: string;
+};
+
+// ── Token store ─────────────────────────────────────────────────────────────
+
+function getTokens(): Record<string, string> {
+  try {
+    return JSON.parse(localStorage.getItem(TOKEN_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveToken(id: number, token: string) {
+  const tokens = getTokens();
+  tokens[String(id)] = token;
+  localStorage.setItem(TOKEN_KEY, JSON.stringify(tokens));
+}
+
+function getToken(id: number): string | null {
+  return getTokens()[String(id)] ?? null;
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function escapeHtml(s: string) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+
+function renderComment(c: Comment, isReply = false): string {
+  const indent = isReply ? "ml-6 border-l-2 border-(--border) pl-4" : "";
+  const canDelete = !!getToken(c.id);
+  const deleteBtn = canDelete
+    ? `<button class="delete-btn ml-2 text-xs opacity-50 hover:opacity-80 hover:text-red-500" data-id="${c.id}">Delete</button>`
+    : "";
+  return `
+    <div class="comment ${indent}" data-id="${c.id}">
+      <div class="flex items-baseline gap-2 mb-1">
+        <span class="text-sm font-semibold">${escapeHtml(c.author)}</span>
+        <span class="text-xs opacity-50">${formatDate(c.created_at)}</span>
+      </div>
+      <p class="text-sm leading-relaxed whitespace-pre-wrap">${escapeHtml(c.body)}</p>
+      <div class="flex items-center gap-1 mt-1">
+        <button
+          class="reply-btn text-xs text-accent hover:opacity-70"
+          data-id="${c.id}"
+          data-author="${escapeHtml(c.author)}"
+        >Reply</button>
+        ${deleteBtn}
+      </div>
+    </div>
+  `;
+}
+
+function renderComments(comments: Comment[]) {
+  const list = document.getElementById("comments-list")!;
+
+  if (comments.length === 0) {
+    list.innerHTML = `<p class="text-sm opacity-60">No comments yet. Be the first!</p>`;
+    return;
+  }
+
+  const topLevel = comments.filter(c => !c.parent_id);
+  const byParent = new Map<number, Comment[]>();
+  for (const c of comments) {
+    if (c.parent_id) {
+      const arr = byParent.get(c.parent_id) ?? [];
+      arr.push(c);
+      byParent.set(c.parent_id, arr);
+    }
+  }
+
+  list.innerHTML = topLevel
+    .map(c => {
+      const replies = byParent.get(c.id) ?? [];
+      return `
+        <div class="space-y-3">
+          ${renderComment(c)}
+          ${replies.map(r => renderComment(r, true)).join("")}
+        </div>
+      `;
+    })
+    .join("");
+
+  list.querySelectorAll<HTMLButtonElement>(".reply-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      setReplyTarget(btn.dataset.id!, btn.dataset.author!);
+    });
+  });
+
+  list.querySelectorAll<HTMLButtonElement>(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", () => deleteComment(Number(btn.dataset.id!)));
+  });
+}
+
+// ── Delete ───────────────────────────────────────────────────────────────────
+
+async function deleteComment(id: number) {
+  const token = getToken(id);
+  if (!token) return;
+
+  if (!confirm("Delete this comment?")) return;
+
+  try {
+    const res = await fetch(
+      `/api/comments?id=${id}&token=${encodeURIComponent(token)}`,
+      { method: "DELETE" }
+    );
+    const data = await res.json() as { success?: boolean; error?: string };
+    if (!res.ok || !data.success) throw new Error(data.error ?? "Failed to delete");
+    await loadComments();
+  } catch (err: any) {
+    alert(err.message ?? "Could not delete comment.");
+  }
+}
+
+// ── Reply state ──────────────────────────────────────────────────────────────
+
+function setReplyTarget(id: string, author: string) {
+  const banner = document.getElementById("reply-banner")!;
+  const authorEl = document.getElementById("reply-to-author")!;
+  const input = document.getElementById("reply-to-id") as HTMLInputElement;
+
+  input.value = id;
+  authorEl.textContent = author;
+  banner.classList.remove("hidden");
+  banner.classList.add("flex");
+  document.getElementById("comment-author")?.focus();
+}
+
+function clearReplyTarget() {
+  const banner = document.getElementById("reply-banner")!;
+  const input = document.getElementById("reply-to-id") as HTMLInputElement;
+
+  input.value = "";
+  banner.classList.add("hidden");
+  banner.classList.remove("flex");
+}
+
+document.getElementById("cancel-reply")?.addEventListener("click", clearReplyTarget);
+
+// ── Fetch ────────────────────────────────────────────────────────────────────
+
+async function loadComments() {
+  try {
+    const res = await fetch(`/api/comments?path=${encodeURIComponent(path)}`);
+    const data = await res.json() as { comments: Comment[] };
+    renderComments(data.comments ?? []);
+  } catch {
+    const list = document.getElementById("comments-list");
+    if (list) list.innerHTML = `<p class="text-sm opacity-60">Failed to load comments.</p>`;
+  }
+}
+
+// ── Submit ───────────────────────────────────────────────────────────────────
+
+const form = document.getElementById("comment-form") as HTMLFormElement;
+const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement;
+const errorEl = document.getElementById("form-error")!;
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const author = (document.getElementById("comment-author") as HTMLInputElement).value.trim();
+  const body = (document.getElementById("comment-body") as HTMLTextAreaElement).value.trim();
+  const parentIdRaw = (document.getElementById("reply-to-id") as HTMLInputElement).value;
+  const parent_id = parentIdRaw ? parseInt(parentIdRaw) : null;
+
+  submitBtn.disabled = true;
+  errorEl.classList.add("hidden");
+
+  try {
+    const res = await fetch("/api/comments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path, author, body, parent_id }),
+    });
+
+    const data = await res.json() as { success?: boolean; error?: string; id?: number; token?: string };
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error ?? "Failed to post comment");
+    }
+
+    if (data.id && data.token) {
+      saveToken(data.id, data.token);
+    }
+
+    form.reset();
+    clearReplyTarget();
+    await loadComments();
+  } catch (err: any) {
+    errorEl.textContent = err.message ?? "Something went wrong.";
+    errorEl.classList.remove("hidden");
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
+loadComments();
+</script>
