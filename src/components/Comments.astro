@@ -169,7 +169,15 @@ async function deleteComment(id: number) {
   const token = getToken(id);
   if (!token) return;
 
-  if (!confirm("Delete this comment?")) return;
+  const hasReplies = document.querySelector(`.comment[data-id="${id}"]`)
+    ?.closest(".space-y-3")
+    ?.querySelectorAll(".comment").length ?? 0 > 1;
+
+  const msg = hasReplies
+    ? "Delete this comment and all its replies?"
+    : "Delete this comment?";
+
+  if (!confirm(msg)) return;
 
   try {
     const res = await fetch(

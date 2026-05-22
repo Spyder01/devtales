@@ -1,5 +1,5 @@
 ---
-title: Building a Graph Database - The File Format
+title: Building a Graph Database 2 - The File Format
 author: Suhan J Bangera
 pubDatetime: 2026-05-21T10:00:00Z
 description: "Every database is ultimately a file. This post walks through how Nexora

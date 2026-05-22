@@ -1,5 +1,5 @@
 ---
-title: "Building a Graph Database - The Why"
+title: "Building a Graph Database 1 - The Why"
 author: "Suhan Bangera"
 pubDatetime: 2026-05-21T09:00:00Z
 description: "Before diving into how Nexora works, this post covers the why and what graph databases are, where relational databases fall short, and why graphs are a natural fit for highly connected data."

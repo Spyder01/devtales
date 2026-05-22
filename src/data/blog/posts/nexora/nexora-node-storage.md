@@ -1,5 +1,5 @@
 ---
-title: "Building a Graph Database - Node Storage"
+title: "Building a Graph Database 3 - Node Storage"
 author: "Suhan Bangera"
 pubDatetime: 2026-05-21T11:00:00Z
 description: "A deep dive into how Nexora stores, looks up, inserts, and deletes nodes. Fixed-size records, identity-bound slots, O(1) direct addressing via the page index, and why deleted nodes leave permanent holes."

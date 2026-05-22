@@ -92,6 +92,11 @@ export async function onRequestDelete(context: any) {
             return json({ error: "Invalid token" }, 403);
         }
 
+        // Delete replies before the parent to avoid FK constraint violation
+        await env.DB.prepare(`DELETE FROM comments WHERE parent_id = ?`)
+            .bind(id)
+            .run();
+
         await env.DB.prepare(`DELETE FROM comments WHERE id = ?`)
             .bind(id)
             .run();
