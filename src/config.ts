@@ -4,7 +4,7 @@ export const SITE = {
   profile: "https://devtales.suhan.art",
   desc: "A dev blog about low-level systems, compilers, runtimes, and the stuff that runs underneath.",
   title: "DevTales",
-  ogImage: "astropaper-og.jpg",
+  ogImage: "V.jpg",
   lightAndDarkMode: true,
   postPerIndex: 5,
   postPerPage: 5,
