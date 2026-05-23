@@ -168,6 +168,6 @@ Currently, only node pages use the page index. Label pages are indexed the same 
 
 ## What's Next
 
-The next post will cover the **WAL (Write-Ahead Log)** — how Nexora achieves crash safety, what gets written to the `.nxr-wal` sidecar on every write, and how checkpoint-on-close works.
+The next post will cover the **WAL (Write-Ahead Log)** — how Nexora intercepts every page write, what a frame looks like on disk, how recovery scans the sidecar after a crash, and how checkpoint-on-close moves data back to the main file.
 
 *Nexora is open source — check it out on <a href="https://github.com/spyder01/nexora" target="_blank">GitHub</a>.*
