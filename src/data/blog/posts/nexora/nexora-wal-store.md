@@ -1,7 +1,7 @@
 ---
 title: "Building a Graph Database 8 - Write-Ahead Log"
 author: "Suhan Bangera"
-pubDatetime: 2026-05-23T11:00:00Z
+pubDatetime: 2026-05-23T08:00:00Z
 description: "How Nexora's WAL intercepts every page write, what a WAL frame looks like on disk, how recovery scans the sidecar file after a crash, and how checkpoint-on-close moves data back to the main file."
 featured: false
 isSeries: true

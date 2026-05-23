@@ -1,7 +1,7 @@
 ---
 title: "Building a Graph Database 9 - Lua Scripting Layer"
 author: "Suhan Bangera"
-pubDatetime: 2026-05-23T12:00:00Z
+pubDatetime: 2026-05-23T09:00:00Z
 description: "How Nexora embeds Lua 5.4 as a scripting and REPL layer — the UserData bridge that turns GraphStore methods into Lua calls, the sandbox that keeps scripts from escaping to the OS, and the REPL's expression auto-eval trick."
 featured: false
 isSeries: true

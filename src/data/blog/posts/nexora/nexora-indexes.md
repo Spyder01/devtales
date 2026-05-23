@@ -1,7 +1,7 @@
 ---
 title: "Building a Graph Database 7 - Indexes"
 author: "Suhan Bangera"
-pubDatetime: 2026-05-23T10:00:00Z
+pubDatetime: 2026-05-23T07:00:00Z
 description: "How Nexora maps a logical page number to a physical page ID in O(1), what a directory page looks like on disk, and how the index grows when the database exceeds a single directory page."
 featured: false
 isSeries: true
